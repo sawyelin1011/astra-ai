@@ -22,7 +22,16 @@ function ChatView() {
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // const { toggleSidebar } = useSidebar();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const GetWorkspaceData = async () => {
     const result = await convex.query(api.workspace.GetWorkspaceData, {
@@ -87,9 +96,9 @@ function ChatView() {
   };
 
   return (
-    <div className="relative h-[85vh] flex flex-col">
+    <div className={`relative flex flex-col ${isMobile ? "h-full" : "h-[85vh]"}`}>
       {/* Messages Container with Custom Scrollbar */}
-      <div className="flex-1 overflow-y-scroll px-4 scrollbar-hide">
+      <div className="flex-1 overflow-y-scroll px-3 md:px-4 scrollbar-hide">
         <style jsx>{`
           .scrollbar-hide {
             -ms-overflow-style: none;
@@ -238,13 +247,13 @@ function ChatView() {
       </div>
       {/* Input Section */}
       <div
-        className="p-5 border rounded-xl max-w-xl w-full mt-3"
+        className={`${isMobile ? "p-3 border-t rounded-t-lg mt-auto" : "p-5 border rounded-xl max-w-xl w-full mt-3"}`}
         style={{ backgroundColor: Colors.BACKGROUND }}
       >
         <div className="flex gap-2">
           <textarea
             value={userInput}
-            placeholder={Lookup.INPUT_PLACEHOLDER}
+            placeholder={isMobile ? "Ask Astra AI..." : Lookup.INPUT_PLACEHOLDER}
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -255,22 +264,26 @@ function ChatView() {
               }
             }}
             spellCheck={false}
-            className="outline-none bg-transparent w-full h-32 max-h-56 resize-none"
+            className={`outline-none bg-transparent w-full resize-none ${
+              isMobile ? "h-16 max-h-24 text-sm" : "h-32 max-h-56"
+            }`}
             disabled={loading}
           />
           {userInput && (
             <ArrowRight
               onClick={() => onGenerate(userInput)}
-              className={`bg-blue-500 p-2 h-10 w-10 rounded-md cursor-pointer ${
+              className={`bg-blue-500 p-2 h-10 w-10 rounded-md cursor-pointer flex-shrink-0 ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             />
           )}
         </div>
-        <div>
-          <Link className="h-5 w-5" />
-        </div>
-      </div>{" "}
+        {!isMobile && (
+          <div>
+            <Link className="h-5 w-5" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
