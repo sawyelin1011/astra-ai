@@ -6,6 +6,7 @@ import { ThemeProvider as CustomThemeProvider } from "@/components/custom/ThemeP
 import { MessagesContext } from "@/context/MessagesContext";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import MockGoogleOAuthProvider from "@/components/custom/MockGoogleOAuthProvider";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ActionProvider } from "@/context/ActionContext";
@@ -42,29 +43,53 @@ const Provider = ({ children }) => {
 
   return (
     <div>
-      <GoogleOAuthProvider
-        clientId={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY}
-      >
-        <UserDetailContext.Provider
-          value={{ userDetail, setUserDetail, isLoadingUser }}
+      {process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY ? (
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY}
         >
-          <MessagesContext.Provider value={{ messages, setMessages }}>
-            <ActionProvider>
-              <NextThemesProvider
-                attribute="class"
-                enableSystem
-                defaultTheme="dark"
-                disableTransitionOnChange
-              >
-                <CustomThemeProvider>
-                  <Header />
-                  {children}
-                </CustomThemeProvider>
-              </NextThemesProvider>
-            </ActionProvider>
-          </MessagesContext.Provider>
-        </UserDetailContext.Provider>
-      </GoogleOAuthProvider>
+          <UserDetailContext.Provider
+            value={{ userDetail, setUserDetail, isLoadingUser }}
+          >
+            <MessagesContext.Provider value={{ messages, setMessages }}>
+              <ActionProvider>
+                <NextThemesProvider
+                  attribute="class"
+                  enableSystem
+                  defaultTheme="dark"
+                  disableTransitionOnChange
+                >
+                  <CustomThemeProvider>
+                    <Header />
+                    {children}
+                  </CustomThemeProvider>
+                </NextThemesProvider>
+              </ActionProvider>
+            </MessagesContext.Provider>
+          </UserDetailContext.Provider>
+        </GoogleOAuthProvider>
+      ) : (
+        <MockGoogleOAuthProvider>
+          <UserDetailContext.Provider
+            value={{ userDetail, setUserDetail, isLoadingUser }}
+          >
+            <MessagesContext.Provider value={{ messages, setMessages }}>
+              <ActionProvider>
+                <NextThemesProvider
+                  attribute="class"
+                  enableSystem
+                  defaultTheme="dark"
+                  disableTransitionOnChange
+                >
+                  <CustomThemeProvider>
+                    <Header />
+                    {children}
+                  </CustomThemeProvider>
+                </NextThemesProvider>
+              </ActionProvider>
+            </MessagesContext.Provider>
+          </UserDetailContext.Provider>
+        </MockGoogleOAuthProvider>
+      )}
     </div>
   );
 };
