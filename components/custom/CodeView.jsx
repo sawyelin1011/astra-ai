@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SandpackProvider,
   SandpackLayout,
@@ -19,8 +19,9 @@ import { useConvex } from "convex/react";
 import { Loader } from "react-feather";
 import SandPackPreviewClient from "./SandPackPreviewClient";
 import { toast } from "sonner";
+import { SkeletonLoader } from "./SkeletonLoader";
 
-function CodeView() {
+function CodeView({ onGeneratingChange, onFileChange }) {
   const { id } = useParams();
   const convex = useConvex();
   const [activeTab, setActiveTab] = useState("code");
@@ -29,6 +30,22 @@ function CodeView() {
   const { userDetail, setUserDetail } = useContext(UserDetailContext);
   const UpdateFiles = useMutation(api.workspace.UpdateFiles);
   const [loading, setLoading] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (onGeneratingChange) {
+      onGeneratingChange(loading);
+    }
+  }, [loading, onGeneratingChange]);
 
   React.useEffect(() => {
     if (messages?.length > 0) {
@@ -56,6 +73,9 @@ function CodeView() {
 
   const GenerateAiCode = async () => {
     setLoading(true);
+    if (onFileChange) {
+      onFileChange("Generating project files...");
+    }
     const PROMPT = JSON.stringify(messages) + " " + Prompt.CODE_GEN_PROMPT;
     try {
       const result = await axios.post("/api/gen-ai-code", {
@@ -66,19 +86,66 @@ function CodeView() {
 
       const mergedFiles = { ...Lookup.DEFAULT_FILE, ...aiResp.files };
       setFiles(mergedFiles);
+      if (onFileChange) {
+        onFileChange("Saving files...");
+      }
       await UpdateFiles({
         workspaceId: id,
         files: aiResp?.files,
       });
-
+      if (onFileChange) {
+        onFileChange("Ready! Preview loading...");
+      }
     } catch (error) {
       console.error("Error in GenerateAiCode:", error);
       toast.error("Failed to generate AI code. Please try again later.");
+      if (onFileChange) {
+        onFileChange("Error generating code");
+      }
     } finally {
-      setActiveTab("code");
+      setActiveTab(isMobile ? "preview" : "code");
       setLoading(false);
     }
   };
+
+  if (isMobile) {
+    return (
+      <div className="relative w-full h-full bg-gray-950">
+        <SandpackProvider
+          files={files}
+          template="react"
+          theme="dark"
+          customSetup={{
+            dependencies: {
+              ...Lookup.DEPENDANCY,
+            },
+          }}
+          options={{ externalResources: ["https://cdn.tailwindcss.com"] }}
+        >
+          <SandpackLayout>
+            {activeTab === "code" ? (
+              <>
+                <SandpackFileExplorer style={{ height: "100vh", width: "100%" }} />
+              </>
+            ) : activeTab === "preview" ? (
+              <>
+                <SandPackPreviewClient />
+              </>
+            ) : null}
+          </SandpackLayout>
+        </SandpackProvider>
+        {loading && (
+          <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-sm flex flex-col items-center justify-center gap-4 rounded-lg">
+            <Loader className="animate-spin h-12 w-12 text-blue-500" />
+            <div className="text-center">
+              <h2 className="text-white font-semibold">Generating Your Files...</h2>
+              <p className="text-gray-400 text-sm mt-1">Please wait</p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="relative">

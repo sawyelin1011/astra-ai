@@ -8,6 +8,17 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "320px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+      },
+      spacing: {
+        "tab-height": "5rem",
+        "safe-bottom": "env(safe-area-inset-bottom)",
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -70,6 +81,50 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      animation: {
+        "slide-in-up": "slideInUp 0.5s ease-out",
+        "slide-in-right": "slideInRight 0.5s ease-out",
+        "pulse-glow": "pulseGlow 2s infinite",
+        "shimmer-animation": "shimmer 3s infinite",
+      },
+      keyframes: {
+        slideInUp: {
+          "0%": {
+            transform: "translateY(100%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
+        },
+        slideInRight: {
+          "0%": {
+            transform: "translateX(-100%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateX(0)",
+            opacity: "1",
+          },
+        },
+        pulseGlow: {
+          "0%, 100%": {
+            "box-shadow": "0 0 0 0 rgba(59, 130, 246, 0.4)",
+          },
+          "50%": {
+            "box-shadow": "0 0 0 10px rgba(59, 130, 246, 0)",
+          },
+        },
+        shimmer: {
+          "0%": {
+            "background-position": "-200% center",
+          },
+          "100%": {
+            "background-position": "200% center",
+          },
+        },
       },
     },
   },

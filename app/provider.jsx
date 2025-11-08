@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import Header from "../components/custom/Header";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProvider as CustomThemeProvider } from "@/components/custom/ThemeProvider";
 import { MessagesContext } from "@/context/MessagesContext";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -55,8 +56,10 @@ const Provider = ({ children }) => {
                 defaultTheme="dark"
                 disableTransitionOnChange
               >
-                <Header />
-                {children}
+                <CustomThemeProvider>
+                  <Header />
+                  {children}
+                </CustomThemeProvider>
               </NextThemesProvider>
             </ActionProvider>
           </MessagesContext.Provider>

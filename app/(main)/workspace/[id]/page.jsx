@@ -1,9 +1,36 @@
+"use client";
 import ChatView from "@/components/custom/ChatView";
 import CodeView from "@/components/custom/CodeView";
+import { MobileWorkspace } from "@/components/custom/MobileWorkspace";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+import { useMobileDetect } from "@/hooks/useMobileDetect";
 import React from "react";
 
 function Workspace() {
+  const isMobile = useMobileDetect();
+
+  if (isMobile) {
+    return (
+      <>
+        <BackgroundGradientAnimation
+          gradientBackgroundStart="rgb(0, 0, 0)"
+          gradientBackgroundEnd="rgb(10, 10, 30)"
+          firstColor="59, 130, 246"
+          secondColor="139, 92, 246"
+          thirdColor="96, 165, 250"
+          fourthColor="147, 51, 234"
+          fifthColor="79, 70, 229"
+          pointerColor="99, 102, 241"
+          size="80%"
+          blendingValue="hard-light"
+          interactive={true}
+          containerClassName="fixed inset-0 -z-10"
+        />
+        <MobileWorkspace />
+      </>
+    );
+  }
+
   return (
     <>
       {/* Background Gradient Animation - same as Hero */}
