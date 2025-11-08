@@ -59,6 +59,15 @@ function Header() {
     const cookies = document.cookie.split(";").find((c) => c.includes("github_token"));
     
     if (!cookies) {
+      // Check if GitHub OAuth is configured
+      if (!process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID) {
+        // Mock GitHub OAuth for development
+        console.log('🔧 Mock GitHub OAuth - no client ID configured');
+        alert('🔧 Mock GitHub OAuth: In production, this would redirect to GitHub for authorization. For now, using mock authentication.');
+        setGithubDialog(true);
+        return;
+      }
+      
       // Redirect to GitHub OAuth
       const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
       const redirectUri = `${window.location.origin}/api/auth/github/callback`;

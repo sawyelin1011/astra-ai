@@ -9,6 +9,7 @@ import {
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useGoogleLogin } from "@react-oauth/google";
+import useGoogleLoginMock from "@/components/custom/useGoogleLogin";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -31,52 +32,99 @@ const SignInDialog = ({ openDialog, closeDialog }) => {
   // Default user image path
   const DEFAULT_USER_IMAGE = "/user.jpg";
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        setLoading(true);
-        const userInfo = await axios.get(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-            },
+  // Use mock hook when OAuth is not configured
+  const googleLogin = process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY 
+    ? useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+          try {
+            setLoading(true);
+            const userInfo = await axios.get(
+              "https://www.googleapis.com/oauth2/v3/userinfo",
+              {
+                headers: {
+                  Authorization: `Bearer ${tokenResponse.access_token}`,
+                },
+              }
+            );
+
+            const user = userInfo.data;
+
+            const createdUser = await CreateUser({
+              name: user?.name,
+              email: user?.email,
+              picture: user?.picture || DEFAULT_USER_IMAGE,
+              uid: uuidv4(),
+              authMethod: "google",
+            });
+
+            const userWithId = {
+              ...user,
+              picture: user?.picture || DEFAULT_USER_IMAGE,
+              _id: createdUser,
+            };
+
+            if (typeof window !== "undefined") {
+              localStorage.setItem("user", JSON.stringify(userWithId));
+            }
+
+            setUserDetail(userWithId);
+            closeDialog(false);
+          } catch (err) {
+            setError(err.message || "Google sign-in failed");
+          } finally {
+            setLoading(false);
           }
-        );
+        },
+        onError: (errorResponse) => {
+          setError("Google sign-in failed");
+          console.log(errorResponse);
+        },
+      })
+    : useGoogleLoginMock({
+        onSuccess: async (tokenResponse) => {
+          try {
+            setLoading(true);
+            // Mock user data for development
+            const user = {
+              id: "123456789",
+              email: "dev.user@astra-ai.local",
+              name: "Development User",
+              picture: "/user.jpg",
+              given_name: "Development",
+              family_name: "User",
+            };
 
-        const user = userInfo.data;
+            const createdUser = await CreateUser({
+              name: user?.name,
+              email: user?.email,
+              picture: user?.picture || DEFAULT_USER_IMAGE,
+              uid: uuidv4(),
+              authMethod: "google",
+            });
 
-        const createdUser = await CreateUser({
-          name: user?.name,
-          email: user?.email,
-          picture: user?.picture || DEFAULT_USER_IMAGE,
-          uid: uuidv4(),
-          authMethod: "google",
-        });
+            const userWithId = {
+              ...user,
+              picture: user?.picture || DEFAULT_USER_IMAGE,
+              _id: createdUser,
+            };
 
-        const userWithId = {
-          ...user,
-          picture: user?.picture || DEFAULT_USER_IMAGE,
-          _id: createdUser,
-        };
+            if (typeof window !== "undefined") {
+              localStorage.setItem("user", JSON.stringify(userWithId));
+            }
 
-        if (typeof window !== "undefined") {
-          localStorage.setItem("user", JSON.stringify(userWithId));
-        }
-
-        setUserDetail(userWithId);
-        closeDialog(false);
-      } catch (err) {
-        setError(err.message || "Google sign-in failed");
-      } finally {
-        setLoading(false);
-      }
-    },
-    onError: (errorResponse) => {
-      setError("Google sign-in failed");
-      console.log(errorResponse);
-    },
-  });
+            setUserDetail(userWithId);
+            closeDialog(false);
+          } catch (err) {
+            setError(err.message || "Mock Google sign-in failed");
+          } finally {
+            setLoading(false);
+          }
+        },
+        onError: (errorResponse) => {
+          setError("Mock Google sign-in failed");
+          console.log(errorResponse);
+        },
+      });
 
   const handleUsernameSignUp = async (e) => {
     e.preventDefault();
