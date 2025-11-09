@@ -12,7 +12,7 @@ export function StatusPIP({ isLoading, status = "generating", fileName = "Genera
   if (!isLoading) return null;
 
   return (
-    <div className="fixed bottom-32 left-4 z-30 animate-in slide-in-from-left md:bottom-8 md:right-8 md:left-auto">
+    <div className="fixed bottom-28 left-4 z-30 animate-in slide-in-from-left md:bottom-8 md:right-8 md:left-auto">
       <div className="bg-gradient-to-r from-purple-900/80 to-blue-900/80 backdrop-blur-md rounded-lg p-4 shadow-2xl border border-purple-500/50 min-w-[250px] md:min-w-[280px]">
         {/* Header */}
         <div className="flex items-center gap-2 mb-3">

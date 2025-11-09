@@ -6,6 +6,7 @@ import { FloatingChat } from "./FloatingChat";
 import { FloatingTabBar } from "./FloatingTabBar";
 import { StatusPIP } from "./StatusPIP";
 import { MessagesContext } from "@/context/MessagesContext";
+import { Eye, Share2 } from "lucide-react";
 
 export function MobileWorkspace() {
   const [activeTab, setActiveTab] = useState("workspace");
@@ -34,8 +35,8 @@ export function MobileWorkspace() {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      {/* Main Content Area - Responsive Padding */}
-      <div className="fixed inset-0 top-0 bottom-20 md:bottom-16 overflow-auto">
+      {/* Main Content Area - Full Height for IDE Experience */}
+      <div className="fixed inset-0 top-0 bottom-16 overflow-hidden">
         {/* Workspace Tab */}
         {activeTab === "workspace" && (
           <div className="w-full h-full">
@@ -48,11 +49,24 @@ export function MobileWorkspace() {
 
         {/* Preview Tab */}
         {activeTab === "preview" && (
-          <div className="w-full h-full p-2 md:p-4">
-            <div className="bg-black/50 rounded-lg w-full h-full flex items-center justify-center border border-purple-500/20">
-              <div className="text-center">
-                <p className="text-gray-400">Preview will load when ready</p>
-                <p className="text-gray-500 text-sm mt-2">Start coding to see live preview</p>
+          <div className="w-full h-full bg-gray-950">
+            <div className="h-full flex flex-col items-center justify-center p-6">
+              <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-2xl w-full max-w-sm p-8 border border-purple-500/20">
+                <div className="flex justify-center mb-4">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-full p-3">
+                    <Eye className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <div className="text-center">
+                  <h3 className="text-white font-semibold text-lg mb-2">Preview Mode</h3>
+                  <p className="text-gray-400 text-sm mb-4">Switch to Workspace tab to start coding and see live preview</p>
+                  <button 
+                    onClick={() => setActiveTab("workspace")}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-full font-medium text-sm hover:shadow-lg transition-all duration-300 active:scale-95"
+                  >
+                    Go to Workspace
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -60,22 +74,40 @@ export function MobileWorkspace() {
 
         {/* Deploy Tab */}
         {activeTab === "deploy" && (
-          <div className="w-full h-full p-4 md:p-6 flex items-center justify-center">
-            <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-purple-500/30 rounded-lg p-6 max-w-md w-full">
-              <h3 className="text-white font-semibold mb-2">Deploy Your App</h3>
-              <p className="text-gray-400 text-sm mb-4">
-                Choose your deployment platform to launch your application
-              </p>
-              <div className="space-y-2">
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm font-medium">
-                  Deploy to CodeSandbox
-                </button>
-                <button className="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition-colors text-sm font-medium">
-                  Deploy to GitHub
-                </button>
-                <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors text-sm font-medium">
-                  Export Project
-                </button>
+          <div className="w-full h-full bg-gray-950">
+            <div className="h-full flex flex-col items-center justify-center p-6">
+              <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl w-full max-w-sm p-8 border border-purple-500/30">
+                <div className="flex justify-center mb-4">
+                  <div className="bg-gradient-to-r from-purple-500 to-blue-600 rounded-full p-3">
+                    <Share2 className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <div className="text-center mb-6">
+                  <h3 className="text-white font-bold text-xl mb-2">Deploy Your App</h3>
+                  <p className="text-gray-400 text-sm">
+                    Choose your platform to launch your application
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-xl transition-all duration-300 font-medium text-sm shadow-lg hover:shadow-blue-500/25 active:scale-95">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 bg-white/20 rounded" />
+                      Deploy to CodeSandbox
+                    </div>
+                  </button>
+                  <button className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white py-3 rounded-xl transition-all duration-300 font-medium text-sm shadow-lg hover:shadow-gray-500/25 active:scale-95">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 bg-white/20 rounded" />
+                      Deploy to GitHub
+                    </div>
+                  </button>
+                  <button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-3 rounded-xl transition-all duration-300 font-medium text-sm shadow-lg hover:shadow-purple-500/25 active:scale-95">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 bg-white/20 rounded" />
+                      Export Project
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
