@@ -17,6 +17,7 @@ import { api } from "@/convex/_generated/api";
 import { useParams } from "next/navigation";
 import { useConvex } from "convex/react";
 import { Loader } from "react-feather";
+import { Code2, Eye } from "lucide-react";
 import SandPackPreviewClient from "./SandPackPreviewClient";
 import { toast } from "sonner";
 import { SkeletonLoader } from "./SkeletonLoader";
@@ -111,6 +112,38 @@ function CodeView({ onGeneratingChange, onFileChange }) {
   if (isMobile) {
     return (
       <div className="relative w-full h-full bg-gray-950">
+        {/* Mobile Tab Switcher */}
+        <div className="bg-[#181818] w-full p-3 border-b border-neutral-800 sticky top-0 z-10">
+          <div className="flex items-center justify-center bg-black p-1.5 w-full max-w-xs mx-auto gap-2 rounded-full">
+            <button
+              className={`flex-1 text-sm font-medium transition-all duration-200 py-2 rounded-full ${
+                activeTab === "code"
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
+                  : "text-gray-300 hover:text-blue-400"
+              }`}
+              onClick={() => setActiveTab("code")}
+            >
+              <div className="flex items-center justify-center gap-1.5">
+                <Code2 className="h-3.5 w-3.5" />
+                <span>Code</span>
+              </div>
+            </button>
+            <button
+              className={`flex-1 text-sm font-medium transition-all duration-200 py-2 rounded-full ${
+                activeTab === "preview"
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
+                  : "text-gray-300 hover:text-blue-400"
+              }`}
+              onClick={() => setActiveTab("preview")}
+            >
+              <div className="flex items-center justify-center gap-1.5">
+                <Eye className="h-3.5 w-3.5" />
+                <span>Preview</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
         <SandpackProvider
           files={files}
           template="react"
@@ -124,22 +157,50 @@ function CodeView({ onGeneratingChange, onFileChange }) {
         >
           <SandpackLayout>
             {activeTab === "code" ? (
-              <>
-                <SandpackFileExplorer style={{ height: "100vh", width: "100%" }} />
-              </>
+              <div className="flex flex-col h-[calc(100vh-80px)]">
+                {/* File Explorer - Collapsible */}
+                <div className="border-b border-neutral-800">
+                  <SandpackFileExplorer 
+                    style={{ 
+                      height: "200px",
+                      fontSize: "13px",
+                      fontFamily: '"SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace'
+                    }} 
+                  />
+                </div>
+                {/* Code Editor */}
+                <div className="flex-1">
+                  <SandpackCodeEditor 
+                    style={{ 
+                      height: "calc(100% - 200px)",
+                      fontSize: "14px",
+                      fontFamily: '"SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace',
+                      lineHeight: "1.5"
+                    }} 
+                  />
+                </div>
+              </div>
             ) : activeTab === "preview" ? (
-              <>
+              <div className="h-[calc(100vh-80px)]">
                 <SandPackPreviewClient />
-              </>
+              </div>
             ) : null}
           </SandpackLayout>
         </SandpackProvider>
         {loading && (
-          <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-sm flex flex-col items-center justify-center gap-4 rounded-lg">
-            <Loader className="animate-spin h-12 w-12 text-blue-500" />
-            <div className="text-center">
-              <h2 className="text-white font-semibold">Generating Your Files...</h2>
-              <p className="text-gray-400 text-sm mt-1">Please wait</p>
+          <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-sm flex flex-col items-center justify-center gap-4 z-50">
+            <div className="relative">
+              <Loader className="animate-spin h-16 w-16 text-blue-500" />
+              <div className="absolute inset-0 rounded-full border-4 border-blue-500/20 animate-ping" />
+            </div>
+            <div className="text-center px-6">
+              <h2 className="text-white font-bold text-lg mb-2">Generating Your Code...</h2>
+              <p className="text-gray-400 text-sm">AI is creating your files</p>
+              <div className="mt-4 flex gap-1 justify-center">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
             </div>
           </div>
         )}

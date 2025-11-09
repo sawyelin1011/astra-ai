@@ -12,7 +12,7 @@ export function FloatingChat() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-4 z-40 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 md:hidden"
+          className="fixed bottom-20 right-4 z-40 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 md:hidden"
           aria-label="Open AI Chat"
         >
           <MessageCircle className="h-6 w-6" />
@@ -22,7 +22,7 @@ export function FloatingChat() {
       {/* Chat Panel */}
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden">
-          <div className="fixed bottom-24 right-0 left-0 top-16 md:hidden bg-gradient-to-b from-gray-950 to-black rounded-t-2xl border border-purple-500/20 shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-120px)]">
+          <div className="fixed bottom-16 right-0 left-0 top-16 md:hidden bg-gradient-to-b from-gray-950 to-black rounded-t-2xl border border-purple-500/20 shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-80px)]">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-purple-500/20 bg-black/50">
               <div className="flex items-center gap-2">
